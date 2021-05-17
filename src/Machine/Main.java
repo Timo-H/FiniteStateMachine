@@ -1,31 +1,49 @@
 package Machine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Main {
     public static void main(String [] args) {
-        Node s0 = new Node("s0");
-        Node s1 = new Node("s1");
-        Node s2 = new Node("s2");
-        Node s3 = new Node("s3");
+        // aantal nodes dat gebruikt zal worden, de rest van het programma past zich hierop aan
+        int aantalNodes = 10;
 
-        Character[] overgangsTekens = {'A', 'B'};
-        Node[][] overgang = {{s2, s1}, {s1, s2}, {null, s3}, {s3, s0}};
-        Node[] nodes = {s0, s1, s2, s3};
+        Random rand = new Random();
 
-
-        for (int i = 0; i < nodes.length; i++) {
-            HashMap<Character, Node> overgangen = new HashMap<>();
-            for (int j = 0; j < overgangsTekens.length; j++) {
-                overgangen.put(overgangsTekens[j], overgang[i][j]);
-            }
-            nodes[i].setOvergangNodes(overgangen);
-        }
-        run(nodes[0]);
+        // aantalStappen random bepaald (tussen 2 en aantalNodes * 2)
+        int aantalStappen = rand.nextInt(aantalNodes*2)+2;
+        run(aantalStappen, makeNodes(aantalNodes));
     }
 
-    public static void run(Node start) {
-        FSM fsm = new FSM("BAAABA", start);
-        fsm.goThroughText();
+    public static Node[] makeNodes(Integer aantalNodes) {
+        Random rand = new Random();
+
+        // aanmaken van de Nodes
+        Node[] nodes = new Node[aantalNodes];
+        for (int i = 0; i < aantalNodes; i++) {
+            nodes[i] = new Node("s" + i);
+        }
+        // zetten van overgangen per Node
+        for (int node = 0; node < aantalNodes; node++) {
+            HashMap<Integer, Node> overgangen = new HashMap<>();
+            // aanmaken van random overgangen
+            for (int j = 0; j < aantalNodes/2; j++) {
+                // 5% kans dat een overgang niet bestaat
+                if (rand.nextInt(20) == 0) {
+                    overgangen.put(j, null);
+                } else {
+                overgangen.put(j, nodes[rand.nextInt(aantalNodes)]);
+                }
+            }
+            nodes[node].setOvergangNodes(overgangen);
+        }
+        return nodes;
+    }
+
+    public static void run(Integer aantalStappen, Node[] nodes) {
+        FSM fsm = new FSM(aantalStappen, nodes);
+        ArrayList<Node> path = fsm.goThroughNodes();
+        System.out.println("path: " + path);
     }
 }
