@@ -27,15 +27,17 @@ public class Main {
         // zetten van overgangen per Node
         for (int node = 0; node < aantalNodes; node++) {
             HashMap<Integer, Node> overgangen = new HashMap<>();
-            // aanmaken van random overgangen
+            // aanmaken van random overgangen (aantal overgangen is het (aantal nodes/2) afgerond)
             for (int j = 0; j < aantalNodes/2; j++) {
                 // 5% kans dat een overgang niet bestaat
                 if (rand.nextInt(20) == 0) {
                     overgangen.put(j, null);
                 } else {
+                    // kiest random een Node voor de overgang (kan ook zichzelf zijn)
                 overgangen.put(j, nodes[rand.nextInt(aantalNodes)]);
                 }
             }
+            // zet de overgangen van deze Node
             nodes[node].setOvergangNodes(overgangen);
         }
         return nodes;
